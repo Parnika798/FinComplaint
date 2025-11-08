@@ -74,35 +74,56 @@ def load_css():
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"] {
-        background: rgba(255, 255, 255, 0.12) !important;
+        background: #ffffff !important;
         padding: 0.75rem 1.25rem !important;
         border-radius: 10px !important;
         margin: 0.25rem 0 !important;
         transition: all 0.2s ease !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"]:hover {
-        background: rgba(255, 255, 255, 0.22) !important;
-        border-color: rgba(255, 255, 255, 0.35) !important;
+        background: #f0f9ff !important;
+        border-color: #3b82f6 !important;
         transform: translateX(4px);
-    }
-
-    [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"][data-checked="true"] {
-        background: #ffffff !important;
-        border-color: #ffffff !important;
-        font-weight: 700 !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
+    [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"][data-checked="true"] {
+        background: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
     [data-testid="stSidebar"] .stRadio label span {
-        color: #ffffff !important;
+        color: #1a365d !important;
         font-weight: 600 !important;
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"][data-checked="true"] span {
-        color: #1a365d !important;
+        color: #ffffff !important;
         font-weight: 700 !important;
+    }
+
+    /* About Section */
+    [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        margin-top: 1rem !important;
+    }
+
+    [data-testid="stSidebar"] .stMarkdown p {
+        color: #e0e7ff !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+    }
+
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        margin: 1.5rem 0 !important;
     }
 
     /* Main Content Container */
