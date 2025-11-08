@@ -12,59 +12,65 @@ st.set_page_config(
 )
 
 # --------------------------------------------------------
-# Load Custom CSS
+# Load Custom CSS (FIXED & IMPROVED)
 # --------------------------------------------------------
 def load_css():
     css = """
     <style>
 
-    /* Global */
-    body {
-        background-color: #f4f7fb !important;
-        font-family: 'Inter', sans-serif;
-    }
-
-    .block-container {
+    /* Reset Streamlit spacing */
+    .stApp, .main, .block-container {
         padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* Sidebar Navigation */
+    /* Background */
+    .stApp {
+        background-color: #f4f7fb !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    /* Sidebar */
     .sidebar {
-        width: 260px;
-        height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
+        height: 100vh;
+        width: 260px;
         background: linear-gradient(180deg, #003366 0%, #005095 100%);
         padding: 30px 20px;
         color: white;
+        z-index: 100;
     }
+
     .sidebar-title {
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 800;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        color: #fff;
     }
+
     .nav-button {
-        padding: 12px 15px;
-        margin-bottom: 10px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
         border-radius: 8px;
-        background-color: rgba(255,255,255,0.1);
+        cursor: pointer;
         font-size: 16px;
         font-weight: 600;
-        cursor: pointer;
         transition: 0.2s;
+        background: rgba(255,255,255,0.12);
     }
     .nav-button:hover {
-        background-color: rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.25);
     }
     .nav-active {
-        background-color: rgba(255,255,255,0.35) !important;
+        background: rgba(255,255,255,0.35) !important;
         color: #002744 !important;
     }
 
-    /* Main Content Area */
+    /* Shift main content right to prevent overlap */
     .main-container {
-        margin-left: 280px;
+        margin-left: 280px !important;
         padding: 30px;
     }
 
@@ -155,7 +161,7 @@ def load_css():
 load_css()
 
 # --------------------------------------------------------
-# Load Model + Encoder
+# Load Model
 # --------------------------------------------------------
 @st.cache_resource
 def load_components():
@@ -183,14 +189,14 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-query_params = st.experimental_get_query_params()
-page = query_params.get("page", ["upload"])[0]
+page = st.experimental_get_query_params().get("page", ["upload"])[0]
 
+# --------------------------------------------------------
+# MAIN CONTENT START
+# --------------------------------------------------------
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# --------------------------------------------------------
 # Top Banner
-# --------------------------------------------------------
 st.markdown("""
 <div class="top-nav">
     <div class="top-nav-title">Banking Complaint Intelligence Dashboard</div>
@@ -199,12 +205,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --------------------------------------------------------
-# PAGE: UPLOAD
+# PAGE LOGIC
 # --------------------------------------------------------
 if page == "upload":
-    st.markdown('<div class="card">', unsafe_allow_html=True)
 
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("Upload Complaint File")
+
     st.markdown('<div class="upload-box">', unsafe_allow_html=True)
     file = st.file_uploader("Upload CSV or Excel", type=["csv", "xlsx"], label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -212,65 +219,52 @@ if page == "upload":
     st.markdown('</div>', unsafe_allow_html=True)
 
     if file:
-        if file.name.endswith(".csv"):
-            df = pd.read_csv(file)
-        else:
-            df = pd.read_excel(file)
+        df = pd.read_csv(file) if file.name.endswith(".csv") else pd.read_excel(file)
 
         if "complaint_text" not in df.columns:
-            st.error("The file must contain a 'complaint_text' column.")
+            st.error("Missing 'complaint_text' column.")
         else:
-            st.success("File uploaded successfully.")
             df["predicted_category"] = df["complaint_text"].apply(predict_category)
             st.session_state["df"] = df
+            st.success("File processed successfully.")
             st.dataframe(df.head(), use_container_width=True)
 
-# --------------------------------------------------------
-# PAGE: INSIGHTS
-# --------------------------------------------------------
+
 elif page == "insights":
 
     if "df" not in st.session_state:
         st.info("Upload a file first.")
     else:
+
         df = st.session_state["df"]
 
         st.subheader("Key Metrics")
 
         total = len(df)
         top_category = df["predicted_category"].value_counts().idxmax()
-        cat_count = df["predicted_category"].value_counts().max()
-        unique_cats = df["predicted_category"].nunique()
+        unique = df["predicted_category"].nunique()
 
-        kpi1, kpi2, kpi3 = st.columns(3)
-        with kpi1:
-            st.markdown('<div class="kpi-card"><div class="kpi-number">{}</div><div class="kpi-label">Total Complaints</div></div>'.format(total), unsafe_allow_html=True)
-        with kpi2:
-            st.markdown('<div class="kpi-card"><div class="kpi-number">{}</div><div class="kpi-label">Top Category</div></div>'.format(top_category), unsafe_allow_html=True)
-        with kpi3:
-            st.markdown('<div class="kpi-card"><div class="kpi-number">{}</div><div class="kpi-label">Unique Categories</div></div>'.format(unique_cats), unsafe_allow_html=True)
-
-        st.markdown('<br>', unsafe_allow_html=True)
+        k1, k2, k3 = st.columns(3)
+        k1.markdown(f'<div class="kpi-card"><div class="kpi-number">{total}</div><div class="kpi-label">Total Complaints</div></div>', unsafe_allow_html=True)
+        k2.markdown(f'<div class="kpi-card"><div class="kpi-number">{top_category}</div><div class="kpi-label">Most Frequent Category</div></div>', unsafe_allow_html=True)
+        k3.markdown(f'<div class="kpi-card"><div class="kpi-number">{unique}</div><div class="kpi-label">Unique Categories</div></div>', unsafe_allow_html=True)
 
         st.markdown('<div class="card">', unsafe_allow_html=True)
+
         st.subheader("Category Breakdown")
 
         counts = df["predicted_category"].value_counts().reset_index()
         counts.columns = ["Category", "Count"]
 
-        col1, col2 = st.columns(2)
-        with col1:
-            fig = px.bar(counts, x="Category", y="Count", text_auto=True, color="Category")
-            st.plotly_chart(fig, use_container_width=True)
-        with col2:
-            fig2 = px.pie(counts, names="Category", values="Count", hole=0.4)
-            st.plotly_chart(fig2, use_container_width=True)
+        c1, c2 = st.columns(2)
+        with c1:
+            st.plotly_chart(px.bar(counts, x="Category", y="Count", color="Category", text_auto=True), use_container_width=True)
+        with c2:
+            st.plotly_chart(px.pie(counts, names="Category", values="Count", hole=0.4), use_container_width=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-# --------------------------------------------------------
-# PAGE: DOWNLOAD
-# --------------------------------------------------------
+
 elif page == "download":
 
     if "df" not in st.session_state:
@@ -280,13 +274,8 @@ elif page == "download":
         st.subheader("Download Results")
 
         csv = st.session_state["df"].to_csv(index=False)
+        st.download_button("Download Classified CSV", csv, "classified_complaints.csv", "text/csv")
 
-        st.download_button(
-            label="Download Classified CSV",
-            data=csv,
-            file_name="classified_complaints.csv",
-            mime="text/csv"
-        )
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
