@@ -74,27 +74,35 @@ def load_css():
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"] {
-        background: rgba(255, 255, 255, 0.08) !important;
+        background: rgba(255, 255, 255, 0.12) !important;
         padding: 0.75rem 1.25rem !important;
         border-radius: 10px !important;
         margin: 0.25rem 0 !important;
         transition: all 0.2s ease !important;
-        border: 1px solid transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"]:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.22) !important;
+        border-color: rgba(255, 255, 255, 0.35) !important;
+        transform: translateX(4px);
     }
 
     [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"][data-checked="true"] {
-        background: rgba(255, 255, 255, 0.25) !important;
-        border-color: rgba(255, 255, 255, 0.3) !important;
+        background: #ffffff !important;
+        border-color: #ffffff !important;
         font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     [data-testid="stSidebar"] .stRadio label span {
         color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+
+    [data-testid="stSidebar"] .stRadio label[data-baseweb="radio"][data-checked="true"] span {
+        color: #1a365d !important;
+        font-weight: 700 !important;
     }
 
     /* Main Content Container */
